@@ -1,0 +1,108 @@
+<!doctype html>
+<html ng-app='brooks'>
+	<head>
+		<meta charset="utf-8">
+		<script type="text/javascript" src='cordova.js'></script>
+		<link rel="stylesheet" href="css/onsenui.css">
+		<link rel="stylesheet" href="css/onsen-css-components.css">
+		<link rel="stylesheet" type="text/css" href="fonts/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="css/index.css">
+		<link href='http://fonts.googleapis.com/css?family=Hind:400,300' rel='stylesheet' type='text/css'>
+		<script type="text/javascript"  src="js/angular.js"></script>
+		<script type="text/javascript"  src="js/onsenui.js"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/index.js"></script>
+	</head>
+	<!-- Brooks Controller --> 
+	<body ng-controller='BrooksController'>
+
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HOME PAGE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+		<ons-navigator var='navigation' id='homepage.html'>
+		  	<ons-page> 
+			  	<!-- HEADER BAR -->
+			  	<ons-row class='header-bar'>
+			  		<ons-col class='connection-status'></ons-col>
+			    </ons-row>
+
+			  		<!-- BROOKS LOGO -->
+			  		<img class='logo' src="img/brooksLogo.svg">
+			  
+			  		<!-- BUTTONS -->
+			  		<p class="button-square" ng-click="navigation.pushPage('add-product.html', {animation: 'slide' })">ADD PRODUCT</p>
+			  		<p class="button-square" ng-click="navigation.pushPage('stored-products.html', {animation: 'slide' }); getAllProducts();">STORED PRODUCTS</p>
+		  	</ons-page>
+		</ons-navigator>
+
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ STORED PRODUCTS PAGE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+		<ons-template id='stored-products.html'>
+		    	<!-- HEADER BAR -->
+			  	<ons-row class='header-bar'>
+			  		<ons-back-button class='left back-arrow'><</ons-back-button>
+			  		<ons-col class='center header-title'>STORED PRODUCTS</ons-col>
+			    </ons-row>
+
+				<p class="button-upload small">UPLOAD ALL</p>
+			    <!-- LIST OF PRODUCTS -->
+			    <div ng-repeat='product in productList'>
+			    <!-- Swipe Gesture -->
+			    <ons-gesture-detector ng-swiperight='removeProduct()'> 
+			    <div id='detect-area'>
+				<div class='card'>
+		          	<div class='image'><img src="{{ product.imagePath }}"></div>
+		          	<div class='product-name'>{{ product.title }}</div>
+		          	<div class='product-sku'>SKU {{ product.sku }} </div>
+		          	<div class="icons">
+		            	<img class='card-upload' ng-click='upload()' src="img/arrow.png">
+		            	<img class='card-remove'ng-click='removeProduct()' src="img/cross.png">
+		      		</div>
+		    	</div>
+		    	</div>
+		    </div>
+			</ons-gesture-detector>
+		    <!-- ADD NEW PRODUCT BUTTON -->
+			<img class='add-product-small' ng-click='sendToUploadNew()' src="img/add-new-product.png">
+			</ons-page>
+		</ons-template>
+
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ADD PRODUCT PAGE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<ons-template id='add-product.html'>
+			<ons-page class='add-product'>
+		    	<!-- HEADER BAR -->
+			  	<ons-row class='header-bar'>
+			  		<ons-back-button class='left back-arrow'><</ons-back-button>
+			  		<ons-col class='center header-title'>ADD PRODUCT</ons-col>
+			    </ons-row>
+
+			    <!-- UPLOAD FORM -->
+			    <form novalidate>
+				    <img class='upload-image' name='photo' ng-click='photoSelection()' src="{{ imageSource }}">
+				    <br>
+				    <input type="text" name='title-input' class="text-input text-input--underbar input" placeholder="Enter product name" ng-model='ProductTitle'>
+				    <br>
+					<input type="number" name='sku-input' class="text-input text-input--underbar input" placeholder="Enter SKU code" ng-model='sku'>
+					<br>
+					<!-- BUTTONS -->
+				  	<p class="button-upload" type="submit" ng-click="getUploadData(ProductTitle, sku, 'now')">UPLOAD NOW</p>
+				  	<p class="button-upload" type="submit" ng-click="getUploadData(ProductTitle, sku, 'later')">UPLOAD LATER</p>	    	
+			    </form>
+
+			</ons-page>
+		</ons-template>
+
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PHOTO UPLOAD METHOD SELECTION ALERT ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+		<script type="text/ons-template" id="photo-selection.html">
+		  <ons-alert-dialog animation="default" cancelable>
+		    <div class="alert-dialog-title">Select Upload Method</div>
+		    <br>
+		    <div class="alert-dialog-footer">
+		      <button ng-click='getPhoto()' class="alert-dialog-button">From Photo Lirbary</button>
+		      <button ng-click='capturePhoto()' class="alert-dialog-button">Capture</button>
+		    </div>
+		  </ons-alert-dialog>
+		</script>
+
+	</body>
+</html>

@@ -54,7 +54,7 @@
 		          	<div class='product-name'>{{ product.title }}</div>
 		          	<div class='product-sku'>SKU {{ product.sku }} </div>
 		          	<div class="icons">
-		            	<img class='card-upload' ng-click='getUploadData(product.title, product.sku, product.imagePath)' src="img/arrow.png">
+		            	<img class='card-upload' ng-click='doUpload(product.title, product.sku, product.imagePath);' src="img/arrow.png">
 		            	<img class='card-remove'ng-click='removeProduct(product, $index);' src="img/cross.png">
 		      		</div>
 		    	</div>
@@ -79,13 +79,13 @@
 			    <form novalidate>
 				    <img class='upload-image' name='photo' ng-click='photoSelection()' src="{{ imageSource }}">
 				    <br>
-				    <input type="text" name='title-input' class="text-input text-input--underbar input" placeholder="Enter product name" ng-model='ProductTitle'>
+				    <input type="text" name='title-input' class="text-input text-input--underbar input" placeholder="Enter product name" ng-model='product.title'>
 				    <br>
-					<input type="number" name='sku-input' class="text-input text-input--underbar input" placeholder="Enter SKU code" ng-model='sku'>
+					<input type="number" name='sku-input' class="text-input text-input--underbar input" placeholder="Enter SKU code" ng-model='product.sku'>
 					<br>
 					<!-- BUTTONS -->
-				  	<p class="button-upload" type="submit" ng-click="getUploadData(ProductTitle, sku, 'now')">UPLOAD NOW</p>
-				  	<p class="button-upload" type="submit" ng-click="getUploadData(ProductTitle, sku, 'later')">UPLOAD LATER</p>	    	
+				  	<p class="button-upload" type="submit" ng-click="getUploadData(product.title, product.sku, 'now')">UPLOAD NOW</p>
+				  	<p class="button-upload" type="submit" ng-click="getUploadData(product.title, product.sku, 'later')">UPLOAD LATER</p>	    	
 			    </form>
 
 			</ons-page>
@@ -103,6 +103,5 @@
 		    </div>
 		  </ons-alert-dialog>
 		</script>
-
 	</body>
 </html>

@@ -5,7 +5,6 @@ var webappurl = 'http://brookfood.clientsee.co.uk';
 var pictureSource;   // picture source
 var destinationType; // sets the format of returned value
 
-
 // device APIs are available
 var onDeviceReady = function (){
     pictureSource=navigator.camera.PictureSourceType; // define the camera picture source
@@ -53,27 +52,17 @@ brookfood.webdb.getAllProducts = function(renderFunc){
     });
 }
 
-brookfood.webdb.onSuccessDelete = function(id) {
-}
-
 function loadProducts(tx, r){
  	products = r;
 }
 
-// Initialise the angualr app module
+// Initialise the angular app module
 var Module = angular.module('brooks', ['onsen']);
 Module.controller('BrooksController', function($scope){
-	
 
-	// WEBDB error handling
-	brookfood.webdb.onError = function(tx, e) {
-	    alert("There has been an error: " + e.message);
-	}
-	// WEBDB 
-	brookfood.webdb.onSuccess = function(uploadData){
-		// DO THE ANIMATION AND REFRESH THE UPLOAD SCREEN
-
-	}
+	// define the add image source and initialise the image source placeholder for the uploaded image
+	$scope.originalImageSource = 'img/add-photo.png';
+	$scope.imageSource = '';
 
 	// save a product to the local database
 	brookfood.webdb.saveProduct = function(title, sku, imagePath){
@@ -92,20 +81,65 @@ Module.controller('BrooksController', function($scope){
 	                     brookfood.webdb.onError);              
 	    });
 	}
+
+	// WEBDB error handling
+	brookfood.webdb.onError = function(tx, e) {
+	    alert("There has been an error: " + e.message);
+	}
+	// WEBDB 
+	brookfood.webdb.onSuccess = function(uploadData){
+		// DO THE ANIMATION AND REFRESH THE UPLOAD SCREEN
+		
+	}
+	// delete product from the local database
 	brookfood.webdb.deleteProduct = function(id){
 	    var db = brookfood.webdb.db;
 	    
 	    db.transaction(function(tx){
 	       tx.executeSql("DELETE FROM products WHERE id=?",[id],
-	                     brookfood.webdb.onSuccessDelete(id),
+	                     brookfood.webdb.onSuccessDelete(),
 	                     brookfood.webdb.onError);
 	       });
 	}
 
+	brookfood.webdb.onSuccessDelete = function() {
+		// do when product has been deleted
+	}
+	
+	$scope.doUpload = function(title, sku, imageSource){
+		// Upload to live database
+		// create timestamp to append to filename
+	    $scope.timeInMs = Date.now();
+	    
+	    //set upload options
+	    $scope.options = new FileUploadOptions();
+	    $scope.options.fileKey = "file";
+	    $scope.options.fileName = timeInMs + imageSource.substr(imageSource.lastIndexOf('/')+1);
+	    $scope.options.mimeType = "image/jpeg";
+	    $scope.options.chunkedMode = false;
 
-	$scope.originalImageSource = 'img/add-photo.png';
-	$scope.imageSource = '';
-		
+	    $scope.options.params = {
+	        title: title,
+	        sku: sku,
+	        refid: "upload",
+	        file: $scope.options.fileName
+    	}
+    	$scope.ft = new FileTransfer();
+    	$scope.ft.upload(imageSource, encodeURI(webappurl + '/app'), $scope.uploadSuccess, $scope.uploadFail, $scope.options);		
+	}
+
+	$scope.uploadSuccess = function(){
+		alert('Uploaded Product.');
+		// Remove entered fields for the form
+		$scope.ProductTitle = '';
+		$scope.sku = '';
+	}
+
+	$scope.uploadFail = function(){
+		alert('Upload Failed.');
+	}
+
+
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ Stored Products Page ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	// when the button at the bottom of the stored products page is clicked to add a new product
@@ -145,6 +179,7 @@ Module.controller('BrooksController', function($scope){
 		}
 	}
 
+
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ Add Product Page ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	// Method of photo selection prompt 
@@ -181,8 +216,7 @@ Module.controller('BrooksController', function($scope){
 		// do stuff when the photo is captured
 		$scope.$apply( function(){
 			$scope.imageSource = imageURI;
-			$( "#photo-selection.html" ).hide();
-			// hide image *
+			// Have a way to hide the photoselection alert dialog.
 		});
 	}
 
@@ -191,59 +225,41 @@ Module.controller('BrooksController', function($scope){
 		alert('Error: ' + message);	
 	}
 
-	$scope.success = function(){
-	}
-
 	$scope.resetImage = function(){
 		$scope.imageSource = $scope.originalImageSource;
 	}
 
 	$scope.getUploadData = function(ProductTitle, sku, when){
-		// // Verifiy an image has been uploaded and is not the original
-		 if($scope.imageSource != $scope.originalImageSource){
-		 	$scope.ProductTitle = angular.copy(ProductTitle);
-		 	$scope.sku = angular.copy(sku);
-		 }
-		 else{
-		 	// ERROR CONTROL
-		 	alert('Image Not Uploaded.');
-		 }
-
-		if(when == 'now'){
-			// Upload to live database
-			// create timestamp to append to filename
-		    $scope.timeInMs = Date.now();
-		    
-		    //set upload options
-		    $scope.options = new FileUploadOptions();
-		    $scope.options.fileKey = "file";
-		    $scope.options.fileName = $scope.timeInMs + $scope.imageSource.substr($scope.imageSource.lastIndexOf('/')+1);
-		    $scope.options.mimeType = "image/jpeg";
-		    $scope.options.chunkedMode = false;
-
-		    $scope.options.params = {
-		        title: $scope.ProductTitle,
-		        sku: $scope.sku,
-		        refid: "upload",
-		        file: $scope.options.fileName
-	    	}
-	    	$scope.ft = new FileTransfer();
-	    	$scope.ft.upload($scope.imageSource, encodeURI(webappurl + '/app'), $scope.uploadSuccess, $scope.uploadFail, $scope.options);
+		$scope.ProductTitle = angular.copy(ProductTitle);
+		$scope.sku = angular.copy(sku);
+		// Verifiy an image has been uploaded and is not the original
+		if($scope.imageSource == $scope.originalImageSource && $scope.sku == undefined && $scope.ProductTitle== undefined){
+    		ons.notification.alert({title: 'Warning', message: 'Nothing was entered.'});
 		}
-		if(when == 'later'){
-			// Upload To Local Database Now
-			brookfood.webdb.saveProduct($scope.ProductTitle, $scope.sku, $scope.imageSource);
-    		brookfood.webdb.getAllProducts(loadProducts); // get all the localy stored products
-			navigation.popPage(); // Go back to the home page
+		else if($scope.imageSource == $scope.originalImageSource){
+		 	ons.notification.alert({title: 'Warning', message: 'Image not uploaded.'});
+		 }
+		else if($scope.sku == undefined){
+			ons.notification.alert({title: 'Warning', message: 'Product sku was not entered.'});
 		}
-	}
+		else if($scope.ProductTitle==undefined){
+			ons.notification.alert({title: 'Warning', message: 'Product title was entered.'});
+		}
+		else{
+			if(when == 'now'){
+			$scope.doUpload($scope.ProductTitle, $scope.sku, $scope.imageSource);
+    	}
 
-	$scope.uploadSuccess = function(){
-		alert('Uploaded Product.');
-	}
-	$scope.uploadFail = function(){
-		alert('Upload Failed.');
-	}
+	    	else if(when == 'later'){
+				// Upload To Local Database Now
+				alert($scope.imageSource);
+				brookfood.webdb.saveProduct($scope.ProductTitle, $scope.sku, $scope.imageSource);
+	    		brookfood.webdb.getAllProducts(loadProducts); // get all the localy stored products
+	    		ons.notification.alert({title: 'Success', message: 'Product Uploaded'});
+				navigation.popPage(); // Go back to the home page
+			}
+		}
+	 }	
 });
 
 

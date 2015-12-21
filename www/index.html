@@ -21,15 +21,15 @@
 		<ons-navigator var='navigation' id='homepage.html'>
 		  	<ons-page> 
 			  	<!-- HEADER BAR -->
-			  	<ons-row class='header-bar'>
-			  		<ons-col class='connection-status'></ons-col>
-			    </ons-row>
+			    <ons-toolbar>
+			      <div class="center"><img class='signal' src="img/icons/4_signal.svg"></div>
+			    </ons-toolbar>
 
 			  		<!-- BROOKS LOGO -->
 			  		<img class='logo' src="img/brooksLogo.svg">
 			  
 			  		<!-- BUTTONS -->
-			  		<p class="button-square" ng-click="navigation.pushPage('add-product.html', {animation: 'slide' })">ADD PRODUCT</p>
+			  		<p class="button-square" ng-click="resetProductAddPage(); navigation.pushPage('add-product.html', {animation: 'slide' })">ADD PRODUCT</p>
 			  		<p class="button-square" ng-click="navigation.pushPage('stored-products.html', {animation: 'slide' }); getAllProducts();">STORED PRODUCTS</p>
 		  	</ons-page>
 		</ons-navigator>
@@ -38,10 +38,12 @@
 
 		<ons-template id='stored-products.html'>
 		    	<!-- HEADER BAR -->
-			  	<ons-row class='header-bar'>
-			  		<ons-back-button class='left back-arrow'><</ons-back-button>
-			  		<ons-col class='center header-title'>STORED PRODUCTS</ons-col>
-			    </ons-row>
+			    <ons-toolbar>
+			      <div class="left">
+			        <ons-back-button><img class='back' src="img/icons/left-back.svg"></ons-back-button>
+			      </div>
+			      <div class="center">STORED PRODUCTS</div>
+			    </ons-toolbar>
 
 				<p class="button-upload small">UPLOAD ALL</p>
 			    <!-- LIST OF PRODUCTS -->
@@ -50,12 +52,12 @@
 			    <ons-gesture-detector ng-swiperight='removeProduct()'> 
 			    <div id='detect-area'>
 				<div class='card'>
-		          	<div class='image'><img src="{{ product.imagePath }}"></div>
+		          	<img class ='image' src="{{ product.imagePath }}">
 		          	<div class='product-name'>{{ product.title }}</div>
-		          	<div class='product-sku'>SKU {{ product.sku }} </div>
+		          	<div class='product-sku'>SKU {{ product.sku }}</div>
 		          	<div class="icons">
-		            	<img class='card-upload' ng-click='upload()' src="img/arrow.png">
-		            	<img class='card-remove'ng-click='removeProduct()' src="img/cross.png">
+		            	<img class='card-upload' ng-click='doUpload(product.title,product.sku,product.imagePath); removeProduct(product)' src="img/icons/upload.svg">
+		            	<img class='card-remove' ng-click='removeProduct(product)' src="img/icons/delete.svg">
 		      		</div>
 		    	</div>
 		    	</div>
@@ -70,18 +72,20 @@
 		<ons-template id='add-product.html'>
 			<ons-page class='add-product'>
 		    	<!-- HEADER BAR -->
-			  	<ons-row class='header-bar'>
-			  		<ons-back-button class='left back-arrow'><</ons-back-button>
-			  		<ons-col class='center header-title'>ADD PRODUCT</ons-col>
-			    </ons-row>
+			    <ons-toolbar>
+			      <div class="left">
+			        <ons-back-button><img class='back' src="img/icons/left-back.svg"></ons-back-button>
+			      </div>
+			      <div class="center">ADD PRODUCT</div>
+			    </ons-toolbar>
 
 			    <!-- UPLOAD FORM -->
 			    <form novalidate>
 				    <img class='upload-image' name='photo' ng-click='photoSelection()' src="{{ imageSource }}">
 				    <br>
-				    <input type="text" name='title-input' class="text-input text-input--underbar input" placeholder="Enter product name" ng-model='ProductTitle'>
-				    <br>
-					<input type="number" name='sku-input' class="text-input text-input--underbar input" placeholder="Enter SKU code" ng-model='sku'>
+				    <input type="text" id='title-input' class="text-input text-input--underbar input" placeholder="product name" ng-model='ProductTitle'>
+				    <br>           
+					<input type="number" id='sku-input' class="text-input text-input--underbar input" placeholder="sku code" ng-model='sku'>
 					<br>
 					<!-- BUTTONS -->
 				  	<p class="button-upload" type="submit" ng-click="getUploadData(ProductTitle, sku, 'now')">UPLOAD NOW</p>

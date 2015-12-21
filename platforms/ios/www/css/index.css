@@ -13,53 +13,42 @@
 body{
 	font-family: 'Hind', sans-serif;
 	font-size: 18px;
-}
-
-.header-bar{
-	background-color: #eaeaea;
-	height: 12%;
 
 }
-.arrow img{
-	width: 20%;
-	display: block;
-	margin: 0 auto;	
+p{
+	font-size: 14px;
 }
-
-.header-title{
-	text-align: center;
-	padding-top: 8%;
+.signal{
+	height: 20px;
 }
-
-.back-arrow{
-	padding-top: 4%;
+.page__status-bar-fill ~ ons-toolbar{
+	background-color: #F2F2F2;
 }
-
-/* Homepage Styles */
-.connection-status{
-	text-align: center;
-	padding-top: 8%;
-	padding-left: 8%;
-	padding-right: 8%;
+.center{
+color:#265F92;
 }
-
+.back{
+	height: 15px;
+}
 .logo{
 	padding-top: 20%;
 	padding-bottom: 15%;
-	width: 80%;
+	width: 75%;
 	display: block;
 	margin: 0 auto;
 }
-
+.connection-status{
+	text-align: center;
+}
 .button-square{
 	color: #55ACEE;
 	text-align: center;
-	padding: 11%;
+	padding: 10%;
 	border-style: solid;
 	border-color: #55ACEE;
 	border-width: 1px;
-	margin-left: 12%;
-	margin-right: 12%;
+	margin-left: 14%;
+	margin-right: 14%;
 }
 /*  Stored Products Styles */
 .card{
@@ -75,7 +64,7 @@ body{
 }
 .card .image{
 	width: 100%;
-	height: 140px;
+	
 }
 
 .card .product-name{
@@ -110,29 +99,29 @@ body{
 	-webkit-overflow-scrolling: touch;
 }
 
-.image{
-    background-repeat: no-repeat;
-    background-size: contain;
-    /*  Need a way to center and scale the image to fit within the box */
-}
-
 .add-product-small{
 	height: 40px;
 	width: 40px;
 	padding-bottom: 8%;
-	padding-top: 10%;
+	padding-top: 4%;
 	margin: 0 auto;
 	display: block;	
 }
 
+.card-upload{
+	width: 40px;
+}
+.card-remove{
+	width: 40px;
+}
 /* Add product Styles */
 .upload-image{
 	text-align: center;
-	width: 40%;
-	padding-top: 15%;
+	height: 100px;
+	padding-top: 5%;
 	display: block;
 	margin: 0 auto;
-	padding-bottom: 10%;
+	padding-bottom: 2%;
 }
 
 .add-product{

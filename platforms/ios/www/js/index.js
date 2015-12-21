@@ -1,7 +1,7 @@
 // Global Variables
 var brookfood = {}; 
 brookfood.webdb = {};
-var webappurl = 'http://brookfood.clientsee.co.uk';
+var webappurl = ''; // http://brookfood.clientsee.co.uk
 var pictureSource;   // picture source
 var destinationType; // sets the format of returned value
 
@@ -62,7 +62,7 @@ Module.controller('BrooksController', function($scope){
 
 	// define the add image source and initialise the image source placeholder for the uploaded image
 	$scope.originalImageSource = 'img/add-photo.png';
-	$scope.imageSource = '';
+	$scope.imageSource = 'img/add-photo.png';
 
 	// save a product to the local database
 	brookfood.webdb.saveProduct = function(title, sku, imagePath){
@@ -104,6 +104,7 @@ Module.controller('BrooksController', function($scope){
 
 	brookfood.webdb.onSuccessDelete = function() {
 		// do when product has been deleted
+		alert('Product Deleted.');
 	}
 	
 	$scope.doUpload = function(title, sku, imageSource){
@@ -124,15 +125,14 @@ Module.controller('BrooksController', function($scope){
 	        refid: "upload",
 	        file: $scope.options.fileName
     	}
+    	alert($scope.options.fileName);
     	$scope.ft = new FileTransfer();
     	$scope.ft.upload(imageSource, encodeURI(webappurl + '/app'), $scope.uploadSuccess, $scope.uploadFail, $scope.options);		
 	}
 
 	$scope.uploadSuccess = function(){
 		alert('Uploaded Product.');
-		// Remove entered fields for the form
-		$scope.ProductTitle = '';
-		$scope.sku = '';
+		resetProductAddPage();
 	}
 
 	$scope.uploadFail = function(){
@@ -152,10 +152,12 @@ Module.controller('BrooksController', function($scope){
 		// do upload all products
 	}
 
-	$scope.removeProduct = function(product, index){
-		// remove specified product
+	$scope.removeProduct = function(product){
+		//  specified product
+		alert('removing product:' + product.id);
     	brookfood.webdb.deleteProduct(product.id);
-    	$scope.productList.splice(index, 1);
+    	$scope.index = $scope.productList.indexOf(product);
+    	$scope.productList.splice($scope.index, 1);
     	brookfood.webdb.getAllProducts(loadProducts);
 	}
 
@@ -178,7 +180,6 @@ Module.controller('BrooksController', function($scope){
 			$scope.isEmpty = false;
 		}
 	}
-
 
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~ Add Product Page ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -225,8 +226,10 @@ Module.controller('BrooksController', function($scope){
 		alert('Error: ' + message);	
 	}
 
-	$scope.resetImage = function(){
+	$scope.resetProductAddPage = function(){
 		$scope.imageSource = $scope.originalImageSource;
+		$('#title-input').val('');
+		$('#sku-input').val('');
 	}
 
 	$scope.getUploadData = function(ProductTitle, sku, when){
